@@ -34,11 +34,12 @@
       "Description": "Storage size in GB"
     },
     "VpcSecurityGroupIds": {
-      "Type": "String",
-      "Description": "Security Group ID to attach to RDS"
+      "Type": "CommaDelimitedList",
+      "Description": "Comma-separated list of Security Group IDs to attach to RDS"
     },
     "DBSubnetGroup": {
       "Type": "String",
+      "Default": "mysql-subnet-group",
       "Description": "Subnet Group Name"
     }
   },
@@ -58,23 +59,14 @@
         "MasterUserPassword": { "Ref": "DBPassword" },
         "DBInstanceClass": { "Ref": "DBInstanceClass" },
         "AllocatedStorage": { "Ref": "AllocatedStorage" },
-        "VPCSecurityGroups": [ { "Ref": "VpcSecurityGroupIds" } ],
+        "VPCSecurityGroups": { "Ref": "VpcSecurityGroupIds" },
         "DBSubnetGroupName": { "Ref": "DBSubnetGroup" },
         "BackupRetentionPeriod": 7,
         "PubliclyAccessible": false,
         "StorageType": "gp2",
         "MultiAZ": false
-      }
-    }
-  },
-  "Outputs": {
-    "DBEndpoint": {
-      "Description": "Database Endpoint",
-      "Value": { "Fn::GetAtt": [ "MyDBInstance", "Endpoint.Address" ] }
-    },
-    "DBPort": {
-      "Description": "Database Port",
-      "Value": { "Fn::GetAtt": [ "MyDBInstance", "Endpoint.Port" ] }
+      },
+      "DeletionPolicy": "Snapshot"
     }
   }
 }
