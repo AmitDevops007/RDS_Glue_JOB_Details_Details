@@ -1,12 +1,28 @@
 {
   "AWSTemplateFormatVersion": "2010-09-09",
-  "Description": "CloudFormation Template to create RDS MySQL Database",
+  "Description": "CloudFormation template for MySQL RDS deployment",
+  "Resources": {
+    "MyDBInstance": {
+      "Type": "AWS::RDS::DBInstance",
+      "Properties": {
+        "DBInstanceIdentifier": "mysql-rds-instance",
+        "Engine": "mysql",
+        "EngineVersion": "8.0",
+        "DBInstanceClass": "db.t3.micro",
+        "AllocatedStorage": "20",
+        "StorageType": "gp2",
+        "MasterUsername": { "Ref": "DBUsername" },
+        "MasterUserPassword": { "Ref": "DBPassword" },
+        "BackupRetentionPeriod": 7,
+        "MultiAZ": false,
+        "PubliclyAccessible": false,
+        "StorageEncrypted": true,
+        "VPCSecurityGroups": [ { "Ref": "DBSecurityGroup" } ],
+        "DBSubnetGroupName": { "Ref": "DBSubnetGroup" }
+      }
+    }
+  },
   "Parameters": {
-    "DBName": {
-      "Type": "String",
-      "Default": "mydb",
-      "Description": "Database name"
-    },
     "DBUsername": {
       "Type": "String",
       "Description": "Database admin username"
@@ -14,59 +30,15 @@
     "DBPassword": {
       "Type": "String",
       "NoEcho": "true",
-      "Description": "Database admin password",
-      "MinLength": "8",
-      "MaxLength": "41"
+      "Description": "Database admin password"
     },
-    "DBInstanceClass": {
-      "Type": "String",
-      "Default": "db.t3.micro",
-      "AllowedValues": [
-        "db.t3.micro",
-        "db.t3.small",
-        "db.t3.medium"
-      ],
-      "Description": "RDS instance type"
-    },
-    "AllocatedStorage": {
-      "Type": "Number",
-      "Default": 20,
-      "Description": "Storage size in GB"
-    },
-    "VpcSecurityGroupIds": {
-      "Type": "CommaDelimitedList",
-      "Description": "Comma-separated list of Security Group IDs to attach to RDS"
+    "DBSecurityGroup": {
+      "Type": "AWS::EC2::SecurityGroup::Id",
+      "Description": "Security Group for RDS"
     },
     "DBSubnetGroup": {
       "Type": "String",
-      "Default": "mysql-subnet-group",
-      "Description": "Subnet Group Name"
-    }
-  },
-  "Mappings": {
-    "RegionMap": {
-      "us-east-1": { "AMI": "ami-12345678" },
-      "us-west-1": { "AMI": "ami-87654321" }
-    }
-  },
-  "Resources": {
-    "MyDBInstance": {
-      "Type": "AWS::RDS::DBInstance",
-      "Properties": {
-        "DBName": { "Ref": "DBName" },
-        "Engine": "mysql",
-        "MasterUsername": { "Ref": "DBUsername" },
-        "MasterUserPassword": { "Ref": "DBPassword" },
-        "DBInstanceClass": { "Ref": "DBInstanceClass" },
-        "AllocatedStorage": { "Ref": "AllocatedStorage" },
-        "VPCSecurityGroups": { "Ref": "VpcSecurityGroupIds" },
-        "DBSubnetGroupName": { "Ref": "DBSubnetGroup" },
-        "BackupRetentionPeriod": 7,
-        "PubliclyAccessible": false,
-        "StorageType": "gp2",
-        "MultiAZ": false
-      },
-      "DeletionPolicy": "Snapshot"
+      "Description": "Subnet Group for RDS"
     }
   }
 }
