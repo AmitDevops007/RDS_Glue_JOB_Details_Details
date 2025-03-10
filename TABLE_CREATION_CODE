@@ -1,0 +1,19 @@
+CREATE TABLE glue_jobs (
+    ->     job_name VARCHAR(255) PRIMARY KEY,
+    ->     role VARCHAR(255),
+    ->     created_on DATETIME,
+    ->     last_modified_on DATETIME,
+    ->     command_script VARCHAR(1024),
+    ->     glue_version VARCHAR(50)
+    -> );
+
+
+
+CREATE TABLE glue_job_runs (
+    ->     run_id VARCHAR(255) PRIMARY KEY,
+    ->     job_name VARCHAR(255),
+    ->     started_on DATETIME,
+    ->     completed_on DATETIME,
+    ->     status VARCHAR(50),
+    ->     error_message TEXT
+    -> );
